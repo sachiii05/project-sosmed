@@ -66,7 +66,7 @@ const Date = () => {
 
       console.log('Sending data to backend:', response);
 
-      fetch("https://backend-malqetlqv-isaacs-projects-a6427b6c.vercel.app/api/responses", {
+      fetch("https://backend-pi-lilac-67.vercel.app/api/responses", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
