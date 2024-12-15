@@ -50,15 +50,52 @@ const Date = () => {
 
   const nextQuestion = () => {
     if (selectedCategory === "rate") {
-      navigate("/thankyou");
+      // Save response to backend
+      const response = {
+        foodChoices: foodData.map((food, index) => ({
+          title: food.title,
+          selected: selectedCards.includes(index)
+        })),
+        movieChoices: movieData.map((movie, index) => ({
+          title: movie.title,
+          selected: selectedCards.includes(index)
+        })),
+        dateTime: JSON.parse(localStorage.getItem("dateTime") || "{}"),
+        rating: (document.querySelector(".heart-slider") as HTMLInputElement)?.value || "0"
+      };
+
+      console.log('Sending data to backend:', response);
+
+      fetch("http://localhost:5001/api/responses", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(response),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log('Response saved successfully:', data);
+          // Reset selections before navigating
+          setSelectedCards([]);
+          navigate("/thankyou");
+        })
+        .catch((error) => {
+          console.error('Error saving response:', error);
+          navigate("/thankyou");
+        });
     } else {
       if (selectedCategory === "movie") {
         setSelectedCategory("rate");
       } else {
+        // Save food selections and move to movies
         setSelectedCategory("movie");
       }
+      // Don't reset selections when moving between food and movies
+      if (selectedCategory === "rate") {
+        setSelectedCards([]);
+      }
     }
-    setSelectedCards([]);
   };
 
   const foodData = [
